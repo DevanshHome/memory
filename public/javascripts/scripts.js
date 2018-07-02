@@ -32,12 +32,12 @@ function newGame() {
     gameBoardSize = 0;
     cardsFlipped = 0;
 
-    // Add code from Part 2.2 here
     // extract game size selection from user
     var size = $("#selectGameSize").val();
 
     // parse game size value
     size = parseInt(size, 10);
+
 
     // check if this is a valid selection
     if (size === 0) {
@@ -65,58 +65,56 @@ function newGame() {
 }
 
 function restoreGame() {
-    // Add code from Part 2.3 here
     // reset the game
-gameBoardSize = 0;
-cardsFlipped = 0;
+    gameBoardSize = 0;
+    cardsFlipped = 0;
 
-// fetch the game state from the server 
-$.get("http://localhost:8000/game", function (response) {
-    // store game board size
-    gameBoardSize = response.length;
+    // fetch the game state from the server 
+    $.get("http://localhost:8000/game", function (response) {
+        // store game board size
+        gameBoardSize = response.length;
 
-    // draw the game board
-    drawGameBoard(response);
-});
+        // draw the game board
+        drawGameBoard(response);
+    });
 }
 
 function drawGameBoard(board) {
-    // Add code from Part 2.5
     // create output
-var output = "";
-// detect board size CSS class
-var css = "";
-switch (board.length / 4) {
-    case 1:
-        css = "rows1";
-        break;
-    case 2:
-        css = "rows2";
-        break;
-    case 3:
-        css = "rows3";
-        break;
-    case 4:
-        css = "rows4";
-        break;   
-}
-// generate HTML for each card and append to the output
-for (var i = 0; i < board.length; i++) {
-    if (board[i].cleared == "true") {
-        // if the card has been cleared apply the .flip class
-        output += "<div class=\"flipContainer col-xs-3 " + css + "\"><div class=\"cards flip matched\" id=\"" + i + "\" onClick=\"flipCard(this)\">\
-            <div class=\"front\"><span class=\"glyphicon glyphicon-question-sign\"></span></div>\
-            <div class=\"back\">" + lookUpGlyphicon(board[i].value) + "</div>\
-            </div></div>";
-    } else {
-        output += "<div class=\"flipContainer col-xs-3 " + css + "\"><div class=\"cards\" id=\"" + i + "\" onClick=\"flipCard(this)\">\
-            <div class=\"front\"><span class=\"glyphicon glyphicon-question-sign\"></span></div>\
-            <div class=\"back\"></div>\
-            </div></div>";
+    var output = "";
+    // detect board size CSS class
+    var css = "";
+    switch (board.length / 4) {
+        case 1:
+            css = "rows1";
+            break;
+        case 2:
+            css = "rows2";
+            break;
+        case 3:
+            css = "rows3";
+            break;
+        case 4:
+            css = "rows4";
+            break;
     }
-}
-// place the output on the page
-$("#game-board").html(output);
+    // generate HTML for each card and append to the output
+    for (var i = 0; i < board.length; i++) {
+        if (board[i].cleared == "true") {
+            // if the card has been cleared apply the .flip class
+            output += "<div class=\"flipContainer col-xs-3 " + css + "\"><div class=\"cards flip matched\" id=\"" + i + "\" onClick=\"flipCard(this)\">\
+				<div class=\"front\"><span class=\"glyphicon glyphicon-question-sign\"></span></div>\
+				<div class=\"back\">" + lookUpGlyphicon(board[i].value) + "</div>\
+				</div></div>";
+        } else {
+            output += "<div class=\"flipContainer col-xs-3 " + css + "\"><div class=\"cards\" id=\"" + i + "\" onClick=\"flipCard(this)\">\
+				<div class=\"front\"><span class=\"glyphicon glyphicon-question-sign\"></span></div>\
+				<div class=\"back\"></div>\
+				</div></div>";
+        }
+    }
+    // place the output on the page
+    $("#game-board").html(output);
 }
 
 function flipCard(card) {
@@ -136,17 +134,17 @@ function flipCard(card) {
             selectedCards.push(card.id);
 
             // post this guess to the server and get this card's value
-             $.ajax({
-                 url: "http://localhost:8000/guess?card=" + selectedCards[0],
-                 type: 'PUT',
-                 success: function (response) {
-                     // display first card value
-                     $("#" + selectedCards[0] + " .back").html(lookUpGlyphicon(response[0].value));
+            $.ajax({
+                url: "http://localhost:8000/guess?card=" + selectedCards[0],
+                type: 'PUT',
+                success: function (response) {
+                    // display first card value
+                    $("#" + selectedCards[0] + " .back").html(lookUpGlyphicon(response[0].value));
 
-                     // store the first card value
-                     selectedCardsValues.push(response[0].value);
-                 }
-             });
+                    // store the first card value
+                    selectedCardsValues.push(response[0].value);
+                }
+            });
         }
         else if (selectedCards.length == 1) {
             // store the second card selection
@@ -177,13 +175,13 @@ function flipCard(card) {
                         selectedCardsValues = [];
 
                         // check if the user won the game
+
                         if (cardsFlipped == gameBoardSize) {
                             setTimeout(function () {
                                 output = "<div id=\"playAgain\"><p>You Win!</p><input type=\"button\" onClick=\"location.reload()\" value=\"Play Again\" class=\"btn\" /></div>";
                                 $("#game-board").html(output);
                             }, 1000);
                         }
-                        // Add code from Part 2.6 here
 
                     }
                     else {
